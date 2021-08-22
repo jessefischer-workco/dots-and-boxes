@@ -28,27 +28,45 @@ div.box:hover {
   cursor: pointer;
 }
 
-div.box.winnerX {
+div.box.winnerA {
   background-color: rgba( 255, 0, 0, 0.3 );
 }
 
-div.box.topDrawn {
+div.box.winnerB {
+  background-color: rgb( 0, 0, 255, 0.3 );
+}
+
+div.box.topA {
   border-top: 3px solid red;
 }
 
+div.box.topB {
+  border-top:  3px solid blue;
+}
 
-div.box.leftDrawn {
+div.box.leftA {
   border-left: 3px solid red;
 }
 
-div.box:last-child.rightDrawn {
+div.box.leftB {
+  border-left: 3px solid blue;
+}
+
+div.box:last-child.rightA {
   border-right: 3px solid red;
 }
 
-div.row:last-child > div.box.bottomDrawn {
+div.box:last-child.rightB {
+  border-right: 3px solid blue;
+}
+
+div.row:last-child > div.box.bottomA {
   border-bottom: 3px solid red;
 }
 
+div.row:last-child > div.box.bottomB {
+  border-bottom: 3px solid blue;
+}
 
 div.row > div.box:last-child {
   border-right: 3px solid #eee;
@@ -66,7 +84,12 @@ div.topLeft {
   left: -6.5px;  
 }
 
+div.topRight, div.bottomLeft, div.bottomRight {
+  display: none;
+}
+
 div.row > div.box:last-child > div.topRight {
+  display: block;
   position: absolute;
   border: 5px black solid;
   border-radius: 5px;
@@ -75,6 +98,7 @@ div.row > div.box:last-child > div.topRight {
 }
 
 div.row:last-child > div.box > div.bottomLeft {
+  display: block;
   position: absolute;
   border: 5px black solid;
   border-radius: 5px;
@@ -82,15 +106,13 @@ div.row:last-child > div.box > div.bottomLeft {
   left: -6.5px;
 }
 
-div.row:last-child > div.box:last-child > div.bottomRight {
+div.row:last-child div.box:last-child div.bottomRight {
+  display: block;
   position: absolute;
+  color:  black;
+  z-index:  10;
   border: 5px black solid;
   border-radius: 5px;
   bottom: -6.5px;
   right: -6.5px;
 }
-
-
-
-
-

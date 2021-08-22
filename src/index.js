@@ -4,17 +4,16 @@ import './index.css';
 
 class Box extends React.Component {
 
-
   render() {
     return (
       <div className={"box" +
-          (this.props.top ? " topDrawn" : "") +
-          (this.props.bottom ? " bottomDrawn" : "") +
-          (this.props.left ? " leftDrawn" : "") +
-          (this.props.right ? " rightDrawn" : "") +
-          (this.props.winner === "X" ? " winnerX" : "")}
+          (this.props.top ? " top" + this.props.top : "") +
+          (this.props.bottom ? " bottom" + this.props.bottom : "") +
+          (this.props.left ? " left" + this.props.left : "") +
+          (this.props.right ? " right" + this.props.right : "") +
+          (this.props.winner ? " winner" + this.props.winner : "")}
           onClick={this.props.onClick}>
-        { this.props.winner }
+        <span className='winner'>{this.props.winner || "_"}</span>
         <div className='topLeft'></div>
         <div className='topRight'></div>
         <div className='bottomLeft'></div>
@@ -30,7 +29,8 @@ class Board extends React.Component {
   constructor( props ) {
     super( props );
     this.state = {
-      nextPlayer: "A",
+      currentPlayer: "A",
+      scores: {"A": 0, "B": 0},
       boxes: []
     }
     for (let i=0; i<Number( props.height); i++ ) {
@@ -41,7 +41,7 @@ class Board extends React.Component {
           left: null,
           right: null,
           bottom: null,
-          winner: "."
+          winner: ""
         };
       }
     }
@@ -52,9 +52,12 @@ class Board extends React.Component {
 
     return (
       <div className='board'>
-        <div className="status">Next Player: {this.state.nextPlayer}</div>
-
-
+        <div className="status">
+          Current Player: {this.state.currentPlayer}<br />
+          Player A: {this.state.scores['A']}<br />
+          Player B: {this.state.scores['B']}
+        </div>
+        
         {this.state.boxes.map( (row,i) => (
           <div className='row'>
             {row.map( (box,j) => <Box
@@ -69,22 +72,35 @@ class Board extends React.Component {
           </div>
           ))
         }
+
+       
       </div>
+
+        
     );
   }
 
-  checkWinner( box ) { 
-    return ( box.top && box.bottom && box.left && box.right );
+  checkWinner( box ) {
+    this.setState( (state) => {
+      if ( box.top && box.bottom && box.left && box.right  ) {
+        state.scores[this.state.currentPlayer]++;
+      }
+      return state;        
+    });
+    if ( box.top && box.bottom && box.left && box.right ) {
+      return this.state.currentPlayer;
+    }
+    else return "";
   }
 
   handleClick( e, i, j ) {
+    // First, get coordinates of click relative to box
     let x = e.clientX - e.target.getBoundingClientRect().left;
     let y = e.clientY - e.target.getBoundingClientRect().top;
 
-
     // Clone boxes state
-
     let newBoxes = this.state.boxes.slice();
+    let winnerFlag = false, turnFlag = false;
 
     // let newBoxes = [];
     // for ( let k=0; k<this.state.boxes.length; k++ ) {
@@ -93,43 +109,65 @@ class Board extends React.Component {
 
 
     if ( y < 10 ) {
-      newBoxes[i][j].top = true;
-      if ( i > 0 ) {
-        newBoxes[i-1][j].bottom = true;
-        newBoxes[i-1][j].winner = this.checkWinner( newBoxes[i-1][j]) ? "X" : ".";
+      if ( ! newBoxes[i][j].top ) {
+        newBoxes[i][j].top = this.state.currentPlayer;
+        turnFlag = true;
+        if ( i > 0 ) {
+          newBoxes[i-1][j].bottom = this.state.currentPlayer;
+          newBoxes[i-1][j].winner = this.checkWinner( newBoxes[i-1][j] );
+          if ( newBoxes[i-1][j].winner ) winnerFlag = true;
+        }
       }
     }
-    if ( y > 40 ) {
-      newBoxes[i][j].bottom = true;
-      if ( i < newBoxes.length - 1 ) {
-        newBoxes[i+1][j].top = true;
-        newBoxes[i+1][j].winner = this.checkWinner( newBoxes[i+1][j]) ? "X" : ".";
+    else if ( y > 40 ) {
+      if ( ! newBoxes[i][j].bottom ) {
+        newBoxes[i][j].bottom = this.state.currentPlayer;
+        turnFlag = true;
+        if ( i < newBoxes.length - 1 ) {
+          newBoxes[i+1][j].top = this.state.currentPlayer;
+          newBoxes[i+1][j].winner = this.checkWinner( newBoxes[i+1][j] );
+          if ( newBoxes[i+1][j].winner ) winnerFlag = true;
+        }
       }
     }
-    if ( x < 10 ) {
-      newBoxes[i][j].left = true;
-      if ( j > 0 ) {
-        newBoxes[i][j-1].right = true;
-        newBoxes[i][j-1].winner = this.checkWinner( newBoxes[i][j-1]) ? "X" : ".";
+    else if ( x < 10 ) {
+      if ( ! newBoxes[i][j].left ) {
+        newBoxes[i][j].left = this.state.currentPlayer;
+        turnFlag = true;
+        if ( j > 0 ) {
+          newBoxes[i][j-1].right = this.state.currentPlayer;
+          newBoxes[i][j-1].winner = this.checkWinner( newBoxes[i][j-1] );
+          if ( newBoxes[i][j-1].winner ) winnerFlag = true;
+        }
       }
     }
-    if ( x > 40 ) {
-      newBoxes[i][j].right = true;
-      if ( j < newBoxes[i].length - 1 ) {
-        newBoxes[i][j+1].left = true;
-        newBoxes[i][j+1].winner = this.checkWinner( newBoxes[i][j+1]) ? "X" : ".";
+    else if ( x > 40 ) {
+      if ( ! newBoxes[i][j].right ) {
+        newBoxes[i][j].right = this.state.currentPlayer;
+        turnFlag = true;
+        if ( j < newBoxes[i].length - 1 ) {
+          newBoxes[i][j+1].left = this.state.currentPlayer;
+          newBoxes[i][j+1].winner = this.checkWinner( newBoxes[i][j+1] );
+          if ( newBoxes[i][j+1].winner ) winnerFlag = true;
+        }
       }
     }
 
 
-    // Check if winner
+    // Check if current box is winner
+    newBoxes[i][j].winner = this.checkWinner( newBoxes[i][j] );
+    if ( newBoxes[i][j].winner ) winnerFlag = true;
 
-    newBoxes[i][j].winner = this.checkWinner( newBoxes[i][j] ) ? "X" : ".";
+    // Update current player
 
+    if ( turnFlag && !winnerFlag ) {
+      if ( this.state.currentPlayer === "A" )
+        this.setState( {currentPlayer: "B"});
+      else
+        this.setState( {currentPlayer: "A"});
+    }
 
-    if ( newBoxes)
-
-
+    // Update state
     this.setState( {boxes: newBoxes} );
   }
 
@@ -152,7 +190,6 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div></div>
-          <ol></ol>
         </div>
       </div>
     );
