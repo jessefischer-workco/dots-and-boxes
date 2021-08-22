@@ -52,11 +52,11 @@ div.box.leftB {
   border-left: 3px solid blue;
 }
 
-div.box:last-child.rightA {
+div.box.rightA:last-child {
   border-right: 3px solid red;
 }
 
-div.box:last-child.rightB {
+div.box.rightB:last-child {
   border-right: 3px solid blue;
 }
 
@@ -68,7 +68,7 @@ div.row:last-child > div.box.bottomB {
   border-bottom: 3px solid blue;
 }
 
-div.row > div.box:last-child {
+div.box:last-child {
   border-right: 3px solid #eee;
 }
 
@@ -115,4 +115,12 @@ div.row:last-child div.box:last-child div.bottomRight {
   border-radius: 5px;
   bottom: -6.5px;
   right: -6.5px;
+}
+
+span.winner {
+  visibility: hidden;
+}
+
+div.box.winnerA span.winner, div.box.winnerB span.winner {
+  visibility: visible;
 }
