@@ -96,7 +96,7 @@ div.row:last-child > div.box {
 
 div.topLeft {
   position: absolute;
-  border: 5px #333 solid;
+  border: 5px #555 solid;
   border-radius: 5px;
   top: -6.5px;
   left: -6.5px;  
@@ -109,7 +109,7 @@ div.topRight, div.bottomLeft, div.bottomRight {
 div.row > div.box:last-child > div.topRight {
   display: block;
   position: absolute;
-  border: 5px #333 solid;
+  border: 5px #555 solid;
   border-radius: 5px;
   top: -6.5px;
   right: -6.5px;  
@@ -118,7 +118,7 @@ div.row > div.box:last-child > div.topRight {
 div.row:last-child > div.box > div.bottomLeft {
   display: block;
   position: absolute;
-  border: 5px #333 solid;
+  border: 5px #555 solid;
   border-radius: 5px;
   bottom: -6.5px;
   left: -6.5px;
@@ -127,7 +127,7 @@ div.row:last-child > div.box > div.bottomLeft {
 div.row:last-child div.box:last-child div.bottomRight {
   display: block;
   position: absolute;
-  border: 5px #333 solid;
+  border: 5px #555 solid;
   border-radius: 5px;
   bottom: -6.5px;
   right: -6.5px;
