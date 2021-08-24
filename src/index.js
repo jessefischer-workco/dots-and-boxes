@@ -47,13 +47,13 @@ class Board extends React.Component {
       return `Current Player: ${this.state.currentPlayer}`;
     }
     else if ( this.state.scores["A"] > this.state.scores["B"] ) {
-      return "<b>Game Over. Winner: Player A!</b>";
+      return "Game Over. Winner: Player A!";
     }
     else if ( this.state.scores["B"] > this.state.scores["A"] ) {
-      return "<b>Game Over. Winner: Player B!<b>";
+      return "Game Over. Winner: Player B!";
     }
     else {
-      return "<b>Game Over. Tie Game<b>";
+      return "Game Over. Tie Game";
     }
   }
 
@@ -107,9 +107,6 @@ class Board extends React.Component {
   }
 
   handleClick( e, i, j ) {
-    e.preventDefault();
-    e.stopPropagation();
-
     // First, get coordinates of click relative to box
     let x = e.clientX - e.target.getBoundingClientRect().left;
     let y = e.clientY - e.target.getBoundingClientRect().top;
