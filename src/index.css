@@ -9,23 +9,5 @@ body {
   height: 100vh;
   font-size: 12px;
   background-color: #eee;
-}
-
-div#title {
-  font-size: 30px;
-  font-weight: 200;
-  letter-spacing: 0.5em;
-  margin-left: 0.5em;
-}
-
-div#bottom-left {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-}
-
-div#bottom-right {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
+  margin: 0;
 }
