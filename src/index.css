@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400&display=swap");
 
 body {
-  font-family: "Roboto Mono", monospace;
   flex-direction: column;
   display: flex;
   justify-content: center;
@@ -10,4 +9,11 @@ body {
   font-size: 12px;
   background-color: #eee;
   margin: 0;
+}
+
+div,
+span,
+input,
+button {
+  font-family: "Roboto Mono", monospace;
 }
