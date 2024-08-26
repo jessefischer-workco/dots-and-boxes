@@ -1,0 +1,113 @@
+.box {
+  position: relative;
+  display: inline-flex;
+  margin: 0px;
+  width: 65px;
+  height: 65px;
+  border-top: 3px solid #ddd;
+  border-left: 3px solid #ddd;
+  justify-content: center;
+  align-items: center;
+  box-sizing: content-box;
+  transition: all 0.1s;
+  -webkit-tap-highlight-color: transparent; /* prevent flickering on iOS Chrome/Safari */
+  cursor: pointer;
+
+  &.winnerA {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+
+  &.winnerB {
+    background-color: rgb(0, 0, 255, 0.3);
+  }
+
+  &.topA {
+    border-top: 3px solid red;
+  }
+
+  &.topB {
+    border-top: 3px solid blue;
+  }
+
+  &.leftA {
+    border-left: 3px solid red;
+  }
+
+  &.leftB {
+    border-left: 3px solid blue;
+  }
+
+  &.rightA:last-child {
+    border-right: 3px solid red;
+  }
+
+  &.rightB:last-child {
+    border-right: 3px solid blue;
+  }
+
+  :last-child > &.bottomA {
+    border-bottom: 3px solid red;
+  }
+
+  :last-child > &.bottomB {
+    border-bottom: 3px solid blue;
+  }
+
+  &:last-child {
+    border-right: 3px solid #ddd;
+  }
+
+  :last-child > & {
+    border-bottom: 3px solid #ddd;
+  }
+
+  .topLeft {
+    position: absolute;
+    border: 5px #555 solid;
+    border-radius: 5px;
+    top: -6.5px;
+    left: -6.5px;
+  }
+
+  .topRight,
+  .bottomLeft,
+  .bottomRight {
+    display: none;
+  }
+
+  &:last-child > .topRight {
+    display: block;
+    position: absolute;
+    border: 5px #555 solid;
+    border-radius: 5px;
+    top: -6.5px;
+    right: -6.5px;
+  }
+
+  :last-child > & > div.bottomLeft {
+    display: block;
+    position: absolute;
+    border: 5px #555 solid;
+    border-radius: 5px;
+    bottom: -6.5px;
+    left: -6.5px;
+  }
+
+  :last-child &:last-child .bottomRight {
+    display: block;
+    position: absolute;
+    border: 5px #555 solid;
+    border-radius: 5px;
+    bottom: -6.5px;
+    right: -6.5px;
+  }
+}
+
+span.winner {
+  visibility: hidden;
+}
+
+.winnerA span.winner,
+.winnerB span.winner {
+  visibility: visible;
+}

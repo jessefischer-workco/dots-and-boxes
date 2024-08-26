@@ -1,19 +1,21 @@
+import styles from "./Box.module.css";
+
 export const Box = ({ top, bottom, left, right, winner, onClick }) => (
   <div
     className={
-      "box" +
-      (top ? " top" + top : "") +
-      (bottom ? " bottom" + bottom : "") +
-      (left ? " left" + left : "") +
-      (right ? " right" + right : "") +
-      (winner ? " winner" + winner : "")
+      styles.box +
+      (top ? " " + styles["top" + top] : "") +
+      (bottom ? " " + styles["bottom" + bottom] : "") +
+      (left ? " " + styles["left" + left] : "") +
+      (right ? " " + styles["right" + right] : "") +
+      (winner ? " " + styles["winner" + winner] : "")
     }
     onClick={onClick}
   >
-    <span className="winner">{winner || "_"}</span>
-    <div className="topLeft"></div>
-    <div className="topRight"></div>
-    <div className="bottomLeft"></div>
-    <div className="bottomRight"></div>
+    <span className={styles.winner}>{winner || "_"}</span>
+    <div className={styles.topLeft}></div>
+    <div className={styles.topRight}></div>
+    <div className={styles.bottomLeft}></div>
+    <div className={styles.bottomRight}></div>
   </div>
 );

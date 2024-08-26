@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { Box } from "./Box";
 
+import styles from "./Board.module.css";
+
 export const Board = ({ height, width }) => {
   const [currentPlayer, setCurrentPlayer] = useState("A");
   const [scores, setScores] = useState({ A: 0, B: 0 });
@@ -130,8 +132,8 @@ export const Board = ({ height, width }) => {
   };
 
   return (
-    <div className="board">
-      <div className="status">
+    <div className={styles.board}>
+      <div className={styles.status}>
         {gameStatus()}
         <br />
         <br />
@@ -141,7 +143,7 @@ export const Board = ({ height, width }) => {
       </div>
 
       {boxes.map((row, i) => (
-        <div className="row" key={`row-${i}`}>
+        <div className={styles.row} key={`row-${i}`}>
           {row.map((box, j) => (
             <Box
               key={`${i}-${j}`}
