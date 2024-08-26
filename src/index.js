@@ -1,7 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as Ably from "ably";
-import { AblyProvider } from "ably/react";
+import { AblyProvider, ChannelProvider } from "ably/react";
+import { v4 as uuidv4 } from "uuid";
 
 import { App } from "./App";
 
@@ -12,13 +13,17 @@ const root = createRoot(rootElement);
 
 const client = new Ably.Realtime({
   key: process.env.REACT_APP_ABLY_API_KEY,
-  clientId: "<client-ID>",
+  clientId: uuidv4(),
 });
 
 root.render(
   <StrictMode>
     <AblyProvider client={client}>
-      <App />
+      <ChannelProvider channelName="players">
+        <ChannelProvider channelName="games">
+          <App />
+        </ChannelProvider>
+      </ChannelProvider>
     </AblyProvider>
   </StrictMode>
 );
