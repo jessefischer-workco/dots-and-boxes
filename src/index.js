@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import { Board } from "./Board";
 
@@ -8,7 +8,7 @@ import "./index.css";
 const Game = () => (
   <div className="game">
     <div className="game-board">
-      <Board height="3" width="5" />
+      <Board height={3} width={5} />
     </div>
     <div className="game-info">
       <div></div>

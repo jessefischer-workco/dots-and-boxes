@@ -1,143 +1,109 @@
-import { Component } from "react";
+import { useState } from "react";
 
 import { Box } from "./Box";
 
-export class Board extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentPlayer: "A",
-      scores: { A: 0, B: 0 },
-      boxes: [],
-    };
-    for (let i = 0; i < Number(props.height); i++) {
-      this.state.boxes[i] = [];
-      for (let j = 0; j < Number(props.width); j++) {
-        this.state.boxes[i][j] = {
-          top: null,
-          left: null,
-          right: null,
-          bottom: null,
-          winner: "",
-        };
-      }
-    }
-  }
+export const Board = ({ height, width }) => {
+  const [currentPlayer, setCurrentPlayer] = useState("A");
+  const [scores, setScores] = useState({ A: 0, B: 0 });
+  const [boxes, setBoxes] = useState(
+    Array(height).fill(
+      Array(width).fill({
+        top: null,
+        left: null,
+        right: null,
+        bottom: null,
+        winner: "",
+      })
+    )
+  );
 
-  gameStatus() {
-    if (
-      this.state.scores["A"] + this.state.scores["B"] <
-      this.state.boxes.length * this.state.boxes[0].length
-    ) {
-      return `Current Player: ${this.state.currentPlayer}`;
-    } else if (this.state.scores["A"] > this.state.scores["B"]) {
+  const gameStatus = () => {
+    if (scores["A"] + scores["B"] < boxes.length * boxes[0].length) {
+      return `Current Player: ${currentPlayer}`;
+    } else if (scores["A"] > scores["B"]) {
       return "Game Over. Winner: Player A!";
-    } else if (this.state.scores["B"] > this.state.scores["A"]) {
+    } else if (scores["B"] > scores["A"]) {
       return "Game Over. Winner: Player B!";
     } else {
       return "Game Over. Tie Game";
     }
-  }
+  };
 
-  render() {
-    return (
-      <div className="board">
-        <div className="status">
-          {this.gameStatus()}
-          <br />
-          <br />
-          Player A: {this.state.scores["A"]}
-          <br />
-          Player B: {this.state.scores["B"]}
-        </div>
-
-        {this.state.boxes.map((row, i) => (
-          <div className="row">
-            {row.map((box, j) => (
-              <Box
-                winner={box.winner}
-                top={box.top}
-                bottom={box.bottom}
-                left={box.left}
-                right={box.right}
-                i={i}
-                j={j}
-                onClick={(e) => this.handleClick(e, i, j)}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  checkWinner(box) {
-    this.setState((state) => {
-      // Check if current player won the current box
-      if (box.top && box.bottom && box.left && box.right) {
-        state.scores[state.currentPlayer]++;
-      }
-      // Check for game over
-      if (
-        state.scores["A"] + state.scores["B"] >=
-        state.boxes.length * state.boxes[0].length
-      ) {
-        state.currentPlayer = "";
-      }
-      return state;
-    });
+  const checkWinner = (box) => {
+    // Check if current player won the current box
     if (box.top && box.bottom && box.left && box.right) {
-      return this.state.currentPlayer;
-    } else return "";
-  }
+      setScores((scores) => ({
+        ...scores,
+        [currentPlayer]: scores[currentPlayer] + 1,
+      }));
+    }
+    // Check for game over
+    if (scores["A"] + scores["B"] >= boxes.length * boxes[0].length) {
+      setCurrentPlayer("");
+    }
 
-  handleClick(e, i, j) {
+    if (box.top && box.bottom && box.left && box.right) {
+      return currentPlayer;
+    } else {
+      return "";
+    }
+  };
+
+  const handleClick = (e, i, j) => {
     // First, get coordinates of click relative to box
     let x = e.clientX - e.target.getBoundingClientRect().left;
     let y = e.clientY - e.target.getBoundingClientRect().top;
 
     // Clone boxes state
-    let newBoxes = this.state.boxes.slice();
+    let newBoxes = [];
+
+    for (let k = 0; k < boxes.length; k++) {
+      newBoxes[k] = [];
+      for (let l = 0; l < boxes[k].length; l++) {
+        newBoxes[k][l] = { ...boxes[k][l] };
+      }
+    }
+
     let winnerFlag = false,
       turnFlag = false;
 
     if (y < 10) {
       if (!newBoxes[i][j].top) {
-        newBoxes[i][j].top = this.state.currentPlayer;
+        newBoxes[i][j].top = currentPlayer;
         turnFlag = true;
         if (i > 0) {
-          newBoxes[i - 1][j].bottom = this.state.currentPlayer;
-          newBoxes[i - 1][j].winner = this.checkWinner(newBoxes[i - 1][j]);
+          newBoxes[i - 1][j].bottom = currentPlayer;
+          newBoxes[i - 1][j].winner = checkWinner(newBoxes[i - 1][j]);
           if (newBoxes[i - 1][j].winner) winnerFlag = true;
         }
       }
     } else if (y > 40) {
       if (!newBoxes[i][j].bottom) {
-        newBoxes[i][j].bottom = this.state.currentPlayer;
+        newBoxes[i][j].bottom = currentPlayer;
         turnFlag = true;
         if (i < newBoxes.length - 1) {
-          newBoxes[i + 1][j].top = this.state.currentPlayer;
-          newBoxes[i + 1][j].winner = this.checkWinner(newBoxes[i + 1][j]);
+          newBoxes[i + 1][j].top = currentPlayer;
+          newBoxes[i + 1][j].winner = checkWinner(newBoxes[i + 1][j]);
           if (newBoxes[i + 1][j].winner) winnerFlag = true;
         }
       }
     } else if (x < 10) {
       if (!newBoxes[i][j].left) {
-        newBoxes[i][j].left = this.state.currentPlayer;
+        newBoxes[i][j].left = currentPlayer;
         turnFlag = true;
         if (j > 0) {
-          newBoxes[i][j - 1].right = this.state.currentPlayer;
-          newBoxes[i][j - 1].winner = this.checkWinner(newBoxes[i][j - 1]);
+          newBoxes[i][j - 1].right = currentPlayer;
+          newBoxes[i][j - 1].winner = checkWinner(newBoxes[i][j - 1]);
           if (newBoxes[i][j - 1].winner) winnerFlag = true;
         }
       }
     } else if (x > 40) {
       if (!newBoxes[i][j].right) {
-        newBoxes[i][j].right = this.state.currentPlayer;
+        newBoxes[i][j].right = currentPlayer;
         turnFlag = true;
         if (j < newBoxes[i].length - 1) {
-          newBoxes[i][j + 1].left = this.state.currentPlayer;
-          newBoxes[i][j + 1].winner = this.checkWinner(newBoxes[i][j + 1]);
+          newBoxes[i][j + 1].left = currentPlayer;
+          newBoxes[i][j + 1].winner = checkWinner(newBoxes[i][j + 1]);
           if (newBoxes[i][j + 1].winner) winnerFlag = true;
         }
       }
@@ -145,19 +111,52 @@ export class Board extends Component {
 
     // Check if current box is winner
     if (!newBoxes[i][j].winner) {
-      newBoxes[i][j].winner = this.checkWinner(newBoxes[i][j]);
+      newBoxes[i][j].winner = checkWinner(newBoxes[i][j]);
       if (newBoxes[i][j].winner) winnerFlag = true;
     }
 
     // Update current player
 
     if (turnFlag && !winnerFlag) {
-      if (this.state.currentPlayer === "A")
-        this.setState({ currentPlayer: "B" });
-      else this.setState({ currentPlayer: "A" });
+      if (currentPlayer === "A") {
+        setCurrentPlayer("B");
+      } else {
+        setCurrentPlayer("A");
+      }
     }
 
     // Update state
-    this.setState({ boxes: newBoxes });
-  }
-}
+    setBoxes(newBoxes);
+  };
+
+  return (
+    <div className="board">
+      <div className="status">
+        {gameStatus()}
+        <br />
+        <br />
+        Player A: {scores["A"]}
+        <br />
+        Player B: {scores["B"]}
+      </div>
+
+      {boxes.map((row, i) => (
+        <div className="row" key={`row-${i}`}>
+          {row.map((box, j) => (
+            <Box
+              key={`${i}-${j}`}
+              winner={box.winner}
+              top={box.top}
+              bottom={box.bottom}
+              left={box.left}
+              right={box.right}
+              i={i}
+              j={j}
+              onClick={(e) => handleClick(e, i, j)}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
