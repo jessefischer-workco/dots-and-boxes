@@ -1,10 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useChannel, useAbly } from "ably/react";
 
 import { Box } from "./Box";
 
 import styles from "./Board.module.css";
 
-export const Board = ({ height, width }) => {
+export const Board = ({
+  name,
+  opponentName,
+  opponentId,
+  height,
+  width,
+  isInitiator,
+}) => {
+  const client = useAbly();
+  const filter = isInitiator
+    ? `${client.auth.clientId}:${opponentId}`
+    : `${opponentId}:${client.auth.clientId}`;
+  const { publish } = useChannel("games", filter, (message) => {
+    console.log(message);
+    if (message.clientId === client.auth.clientId) {
+      return;
+    }
+    if (message.data.action === "update-game") {
+      setBoxes(message.data.boxes);
+      setCurrentPlayer(message.data.currentPlayer);
+    }
+    if (message.data.action === "update-scores") {
+      setScores(message.data.scores);
+    }
+    if (message.data.action === "game-over") {
+      setCurrentPlayer("");
+      setScores(message.data.scores);
+    }
+  });
+
   const [currentPlayer, setCurrentPlayer] = useState("A");
   const [scores, setScores] = useState({ A: 0, B: 0 });
   const [boxes, setBoxes] = useState(
@@ -19,29 +49,41 @@ export const Board = ({ height, width }) => {
     )
   );
 
+  useEffect(() => {
+    if (isInitiator) {
+      publish(filter, { action: "game-start", name, opponentName });
+    }
+  }, [isInitiator, publish, filter, name, opponentName]);
+
   const gameStatus = () => {
     if (scores["A"] + scores["B"] < boxes.length * boxes[0].length) {
-      return `Current Player: ${currentPlayer}`;
+      return `Current Player: ${
+        (currentPlayer === "A") === isInitiator ? name : opponentName
+      }`;
     } else if (scores["A"] > scores["B"]) {
-      return "Game Over. Winner: Player A!";
+      return `Game Over. Winner: ${isInitiator ? name : opponentName}!`;
     } else if (scores["B"] > scores["A"]) {
-      return "Game Over. Winner: Player B!";
+      return `Game Over. Winner: ${isInitiator ? opponentName : name}!`;
     } else {
       return "Game Over. Tie Game";
     }
   };
 
   const checkWinner = (box) => {
+    let newScores = { ...scores };
     // Check if current player won the current box
     if (box.top && box.bottom && box.left && box.right) {
-      setScores((scores) => ({
+      newScores = {
         ...scores,
         [currentPlayer]: scores[currentPlayer] + 1,
-      }));
+      };
+      setScores(newScores);
+      publish(filter, { action: "update-scores", scores: newScores });
     }
     // Check for game over
-    if (scores["A"] + scores["B"] >= boxes.length * boxes[0].length) {
+    if (newScores["A"] + newScores["B"] >= boxes.length * boxes[0].length) {
       setCurrentPlayer("");
+      publish(filter, { action: "game-over", scores: newScores });
     }
 
     if (box.top && box.bottom && box.left && box.right) {
@@ -52,12 +94,18 @@ export const Board = ({ height, width }) => {
   };
 
   const handleClick = (e, i, j) => {
+    // Check if it's the player's turn
+    if ((currentPlayer === "B") === isInitiator) {
+      return;
+    }
+
     // First, get coordinates of click relative to box
     let x = e.clientX - e.target.getBoundingClientRect().left;
     let y = e.clientY - e.target.getBoundingClientRect().top;
 
     // Clone boxes state
     let newBoxes = [];
+    let newCurrentPlayer = currentPlayer;
 
     for (let k = 0; k < boxes.length; k++) {
       newBoxes[k] = [];
@@ -121,14 +169,22 @@ export const Board = ({ height, width }) => {
 
     if (turnFlag && !winnerFlag) {
       if (currentPlayer === "A") {
-        setCurrentPlayer("B");
+        newCurrentPlayer = "B";
       } else {
-        setCurrentPlayer("A");
+        newCurrentPlayer = "A";
       }
     }
 
     // Update state
     setBoxes(newBoxes);
+    setCurrentPlayer(newCurrentPlayer);
+
+    // Publish state
+    publish(filter, {
+      action: "update-game",
+      boxes: newBoxes,
+      currentPlayer: newCurrentPlayer,
+    });
   };
 
   return (
@@ -137,9 +193,9 @@ export const Board = ({ height, width }) => {
         {gameStatus()}
         <br />
         <br />
-        Player A: {scores["A"]}
+        {isInitiator ? name : opponentName}: {scores["A"]}
         <br />
-        Player B: {scores["B"]}
+        {isInitiator ? opponentName : name}: {scores["B"]}
       </div>
 
       {boxes.map((row, i) => (
