@@ -72,7 +72,9 @@ export const App = () => {
         <a href="https://en.wikipedia.org/wiki/Dots_and_Boxes">About</a>
       </div>
       <div className={styles.bottomRight}>
-        <a href="https://github.com/jessefischer/dots-and-boxes">Source</a>
+        <a href="https://github.com/jessefischer-workco/dots-and-boxes">
+          Source
+        </a>
       </div>
     </>
   );
