@@ -204,6 +204,12 @@ export const Board = ({
             <Box
               key={`${i}-${j}`}
               winner={box.winner}
+              winnerLabel={((box.winner === "A") === isInitiator
+                ? name
+                : opponentName
+              )
+                .charAt(0)
+                .toUpperCase()}
               top={box.top}
               bottom={box.bottom}
               left={box.left}
