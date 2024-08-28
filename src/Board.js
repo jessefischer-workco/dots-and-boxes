@@ -57,9 +57,9 @@ export const Board = ({
 
   const gameStatus = () => {
     if (scores["A"] + scores["B"] < boxes.length * boxes[0].length) {
-      return `Current Player: ${
-        (currentPlayer === "A") === isInitiator ? name : opponentName
-      }`;
+      return (currentPlayer === "A") === isInitiator
+        ? "Your turn"
+        : `${opponentName}’s turn`;
     } else if (scores["A"] > scores["B"]) {
       return `Game Over. Winner: ${isInitiator ? name : opponentName}!`;
     } else if (scores["B"] > scores["A"]) {
